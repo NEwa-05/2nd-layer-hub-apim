@@ -1,0 +1,12 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: API
+metadata:
+  name: customer-api-versioned
+  namespace: apps
+  labels:
+    area: customers
+    module: crm
+spec:
+  versions:
+    - name: customer-api-v1

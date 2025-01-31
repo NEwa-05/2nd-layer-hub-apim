@@ -1,0 +1,11 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APIAccess
+metadata:
+  name: customers-access
+  namespace: apps
+spec:
+  everyone: true
+  apis:
+    - name: customer-api-versioned
+  

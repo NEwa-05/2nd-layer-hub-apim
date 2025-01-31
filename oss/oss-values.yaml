@@ -1,0 +1,56 @@
+deployment:
+  replicas: 1
+ingressRoute:
+  dashboard:
+    enabled: false
+ingressClass:
+  enabled: true
+  isDefaultClass: false
+  name: front-layer
+providers:
+  kubernetesCRD:
+    enabled: true
+    allowCrossNamespace: true
+    allowExternalNameServices: true
+    allowEmptyServices: true
+    ingressClass: front-layer
+logs:
+  general:
+    format: json
+    level: DEBUG
+  access:
+    enabled: true
+    format: json
+    addInternals: false
+    fields:
+      general:
+        defaultmode: keep
+      headers:
+        defaultmode: keep
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: "app.kubernetes.io/name"
+                operator: In
+                values:
+                  - traefik
+          topologyKey: kubernetes.io/hostname
+        weight: 100
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 100m
+  limits:
+    memory: 256Mi
+    cpu: 100m
+tlsStore:
+  default:
+    defaultCertificate:
+      secretName: wildcard-cert
+ports:
+  websecure:
+    tls:
+      enabled: true

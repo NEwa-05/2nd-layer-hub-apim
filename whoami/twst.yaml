@@ -1,0 +1,98 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: API
+metadata:
+  name: test-ext-api
+  namespace: whoami
+  labels:
+    area: test
+    module: crm
+spec: {}
+  # openApiSpec:
+  #   path: /openapi.yaml
+  #   validateRequestMethodAndPath: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-ext-svc
+  namespace: whoami
+spec:
+  type: ExternalName
+  externalName: whoami.front.dbl25tst01w05.mageekbox.eu
+  ports:
+  - port: 443
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: test-ext-ig
+  namespace: whoami
+  annotations:
+    kubernetes.io/ingress.class: back-layer
+    hub.traefik.io/api: test-ext-api
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: >-
+        Host(`whoami.dbl25tst01w05.mageekbox.eu`) &&
+        PathPrefix(`/api`)
+      services:
+        - name: test-ext-svc
+          port: 443
+          passHostHeader: false
+      middlewares:
+        - name: test-ext-replacepath
+  tls:
+    certResolver: le
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: test-ext-replacepath
+  namespace: whoami
+spec:
+  replacePathRegex:
+    regex: ^/api(.*)
+    replacement: /searchplus-do/DOMAIN/v11$1
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: ManagedSubscription
+metadata:
+  name: whoami
+  namespace: whoami
+spec:
+  apiPlan:
+    name: test
+  apis:
+  - name: test-ext-api
+  applications:
+  - appId: whoami
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APIPlan
+metadata:
+  name: test
+  namespace: whoami
+spec:
+  quota:
+    limit: 10
+    period: 1h
+  rateLimit:
+    limit: 1
+    period: 10s
+  title: test
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APICatalogItem
+metadata:
+  name: whoami
+  namespace: whoami
+spec:
+  apiPlan:
+    name: test
+  apis:
+  - name: test-ext-api
+  everyone: true

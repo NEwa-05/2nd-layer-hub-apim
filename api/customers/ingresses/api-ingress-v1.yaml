@@ -1,0 +1,25 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: api-ingress-customers
+  namespace: apps
+  annotations:
+    hub.traefik.io/api: customer-api-versioned
+    hub.traefik.io/api-version: customer-api-v1
+    kubernetes.io/ingress.class: back-layer
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`api.${CLUSTERNAME}.${DOMAINNAME}`) && PathPrefix(`/customers`)
+      services:
+        - name: customer-app
+          port: 3000
+      middlewares:
+        - name: cors
+          namespace: traefik
+  tls:
+    certResolver: le
+

@@ -1,0 +1,93 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: customer-data
+  namespace: apps
+data:
+  api.json: |
+    {
+      "customers": {
+        "1":  { "firstName": "John", "lastName": "Doe", "points": 100, "status": "bronze" },
+        "2":  { "firstName": "Jane", "lastName": "Doe", "points": 200, "status": "silver" },
+        "3":  {"firstName": "John", "lastName": "Smith", "points": 300, "status": "gold" }
+      }
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-app
+  namespace: apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-app
+  template:
+    metadata:
+      labels:
+        app: customer-app
+        api: customers
+    spec:
+      containers:
+        - name: api
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "50m"
+            limits:
+              memory: "32Mi"
+              cpu: "50m"
+          image: newa/api-server:v2.0.4
+          args: ["-data", "/api/api.json", "-openapi", "/public/openapi.yaml"]
+          env:
+            - name: COLLECTORADDR
+              value: "http://simplest-collector.jaeger.svc.cluster.local:4318"
+            - name: COLLECTORPATH
+              value: "/v1/traces"
+            - name: ENV
+              value: "dev"          
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: api-data
+            mountPath: /api
+          - name: openapi
+            mountPath: /public
+      volumes:
+        - name: api-data
+          configMap:
+            name: customer-data
+        - name: openapi
+          configMap:
+            name: customer-v1-apispec
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: api
+                      operator: In
+                      values:
+                        - customers
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-app
+  namespace: apps
+  labels:
+    app: customer-app
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      name: api
+  selector:
+    app: customer-app
+

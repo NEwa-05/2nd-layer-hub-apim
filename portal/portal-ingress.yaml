@@ -1,0 +1,20 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: apiportal
+  namespace: whoami
+  annotations:
+    hub.traefik.io/api-portal: portal
+    kubernetes.io/ingress.class: back-layer
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`portal.${CLUSTERNAME}.${DOMAINNAME}`)
+    kind: Rule
+    services:
+    - name: apiportal
+      namespace: traefik
+      port: 9903
+  tls:

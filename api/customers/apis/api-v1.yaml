@@ -1,0 +1,12 @@
+### k apply -f api/customers/apis/api-v1.yaml
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APIVersion
+metadata:
+  name: customer-api-v1
+  namespace: apps
+spec:
+  release: 1.0.0
+  openApiSpec:
+    path: /openapi.yaml
+    validateRequestMethodAndPath: false
