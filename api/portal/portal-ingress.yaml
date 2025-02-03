@@ -11,10 +11,11 @@ spec:
   entryPoints:
     - websecure
   routes:
-  - match: Host(`portal.${CLUSTERNAME}.${DOMAINNAME}`)
+  - match: Host(`api-portal.${CLUSTERNAME}.${FULLDOMAINNAME}`)
     kind: Rule
     services:
     - name: apiportal
       namespace: traefik
       port: 9903
   tls:
+    certResolver: le

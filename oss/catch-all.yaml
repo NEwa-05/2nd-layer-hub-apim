@@ -12,7 +12,7 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: catchall
+  name: catchall-https
   namespace: traefik
   annotations:
     kubernetes.io/ingress.class: front-layer
@@ -29,9 +29,31 @@ spec:
           port: 443
           scheme: https
           serversTransport: oss-transport
-      middlewares:
-        - name: cors
+      # middlewares:
+      #   - name: cors
   tls: {}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: catchall-http
+  namespace: traefik
+  annotations:
+    kubernetes.io/ingress.class: front-layer
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: HostRegexp(`^.+\.${CLUSTERNAME}\.${DOMAINNAME}`)
+      priority: 1
+      services:
+        - kind: Service
+          name: traefik
+          port: 80
+          scheme: http
+      # middlewares:
+      #   - name: cors
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
@@ -53,47 +75,29 @@ spec:
           port: 9903
           scheme: https
           serversTransport: oss-transport
-      middlewares:
-        - name: cors
+      # middlewares:
+      #   - name: cors
   tls: {}
 # ---
 # apiVersion: traefik.io/v1alpha1
-# kind: IngressRouteTCP
+# kind: Middleware
 # metadata:
-#   name: catchall-cert
+#   name: cors
 #   namespace: traefik
-#   annotations:
-#     kubernetes.io/ingress.class: front-layer
 # spec:
-#   entryPoints:
-#     - web
-#   routes:
-#     - match: HostSNI(`*`)
-#       priority: 1
-#       services:
-#         - name: traefik
-#           port: 80
-
----
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: cors
-  namespace: traefik
-spec:
-  headers:
-    accessControlAllowCredentials: true
-    accessControlAllowMethods:
-      - GET
-      - HEAD
-      - POST
-      - PUT
-      - PATCH
-      - DELETE
-      - CONNECT
-      - OPTIONS
-    accessControlAllowOriginList:
-      - "*"
-    accessControlMaxAge: 0
-    accessControlAllowHeaders:
-      - "*"
+#   headers:
+#     accessControlAllowCredentials: true
+#     accessControlAllowMethods:
+#       - GET
+#       - HEAD
+#       - POST
+#       - PUT
+#       - PATCH
+#       - DELETE
+#       - CONNECT
+#       - OPTIONS
+#     accessControlAllowOriginList:
+#       - "*"
+#     accessControlMaxAge: 0
+#     accessControlAllowHeaders:
+#       - "*"

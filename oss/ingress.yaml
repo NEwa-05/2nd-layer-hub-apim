@@ -11,7 +11,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`oss.${CLUSTERNAME}.${DOMAINNAME}`)
+      match: Host(`oss.${CLUSTERNAME}.${FULLDOMAINNAME}`)
       services:
         - name: api@internal
           kind: TraefikService

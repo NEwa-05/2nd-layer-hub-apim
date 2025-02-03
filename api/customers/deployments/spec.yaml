@@ -18,7 +18,7 @@ data:
         name: Apache 2.0
         url: 'https://spdx.org/licenses/Apache-2.0.html'
     servers:
-      - url: https://api.dbl25tst01w05.mageekbox.eu
+      - url: https://api.dbl25tst01w06.mageekbox.eu
     paths:
       /customers:
         get:
@@ -106,7 +106,7 @@ data:
         name: Apache 2.0
         url: 'https://spdx.org/licenses/Apache-2.0.html'
     servers:
-      - url: https://api.dbl25tst01w05.mageekbox.eu
+      - url: https://api.dbl25tst01w06.mageekbox.eu
     paths:
       /customers:
         get:
@@ -220,7 +220,7 @@ data:
         name: Apache 2.0
         url: 'https://spdx.org/licenses/Apache-2.0.html'
     servers:
-      - url: https://api.dbl25tst01w05.mageekbox.eu
+      - url: https://api.dbl25tst01w06.mageekbox.eu
     paths:
       /customers:
         get:

@@ -60,8 +60,6 @@ additionalArguments:
   - '--certificatesresolvers.le.distributedAcme=true'
   - '--certificatesresolvers.le.distributedAcme.storage.kubernetes=true'
   - '--certificatesresolvers.le.distributedAcme.email=david.blaskow@traefik.io'
-  # - '--certificatesresolvers.le.distributedAcme.tlschallenge=true'
-  - '--certificatesresolvers.le.distributedAcme.httpchallenge=true'
   - '--certificatesresolvers.le.distributedAcme.httpchallenge.entrypoint=web'
 hub:
   token: hub-license

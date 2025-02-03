@@ -1,0 +1,39 @@
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: ManagedSubscription
+metadata:
+  name: customer-sub
+  namespace: apps
+spec:
+  apiPlan:
+    name: std
+  apis:
+  - name: customer-api-versioned
+  applications:
+  - appId: cutomer
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APIPlan
+metadata:
+  name: std
+  namespace: apps
+spec:
+  quota:
+    limit: 10
+    period: 1h
+  rateLimit:
+    limit: 1
+    period: 10s
+  title: std plan
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APICatalogItem
+metadata:
+  name: customer-catalog
+  namespace: apps
+spec:
+  apiPlan:
+    name: std
+  apis:
+  - name: customer-api-versioned
+  everyone: true

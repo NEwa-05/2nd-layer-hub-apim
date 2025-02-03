@@ -50,7 +50,7 @@ tlsStore:
   default:
     defaultCertificate:
       secretName: wildcard-cert
-ports:
-  websecure:
-    tls:
-      enabled: true
+# ports:
+#   websecure:
+#     tls:
+#       enabled: true

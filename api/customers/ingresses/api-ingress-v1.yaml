@@ -13,13 +13,34 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`api.${CLUSTERNAME}.${DOMAINNAME}`) && PathPrefix(`/customers`)
+      match: Host(`api.${CLUSTERNAME}.${FULLDOMAINNAME}`) && PathPrefix(`/customers`)
       services:
         - name: customer-app
           port: 3000
       middlewares:
         - name: cors
-          namespace: traefik
   tls:
     certResolver: le
-
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: cors
+  namespace: apps
+spec:
+  headers:
+    accessControlAllowCredentials: true
+    accessControlAllowMethods:
+      - GET
+      - HEAD
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+      - CONNECT
+      - OPTIONS
+    accessControlAllowOriginList:
+      - "*"
+    accessControlMaxAge: 0
+    accessControlAllowHeaders:
+      - "*"

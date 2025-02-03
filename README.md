@@ -10,7 +10,7 @@ LEGO_DISABLE_CNAME_SUPPORT=true lego -a --email mageekbox@gmail.com --dns gandiv
 
 ## Deploy OSS
 
-### Create namespace
+### Create OSS namespace
 
 ```bash
 kubectl create ns oss-traefik
@@ -51,15 +51,17 @@ curl -s -X POST -d $ADDRECORD \
 envsubst < oss/ingress.yaml | kubectl apply -f -
 ```
 
-### Deploy Catchall ingress
+## deploy Redis
+
+### For distributed features
 
 ```bash
-envsubst < oss/catch-all.yaml | kubectl apply -f -
+helm upgrade --install redis bitnami/redis --namespace redis --values redis/values.yaml --create-namespace
 ```
 
 ## Deploy Hub
 
-### Create namespace
+### Create Hub namespace
 
 ```bash
 kubectl create ns traefik
@@ -77,66 +79,24 @@ kubectl create secret generic hub-license --from-literal=token="${HUB_TOKEN}" -n
 helm upgrade --install traefik traefik/traefik --create-namespace --namespace traefik --values hub/hub-values.yaml
 ```
 
+### Deploy Catchall ingress
+
+```bash
+envsubst < oss/catch-all.yaml | kubectl apply -f -
+```
+
 ### Deploy dashboard ingress
 
 ```bash
 envsubst < hub/ingress.yaml | kubectl apply -f -
 ```
 
-## Deploy app
-
-### Create apps namespace
-
-```bash
-kubectl create ns whoami
-```
-
-### Deploy whoami, middleware and ingress
-
-```bash
-kubectl apply -f whoami/whoami.yaml
-envsubst < whoami/ingress.yaml | kubectl apply -f -
-```
-
-## Deploy Keycloak
-
-### Create keycloak namespace
-
-```bash
-kubectl create ns keycloak
-```
-
-### Create keycloak admin password
-
-```bash
-kubectl create secret generic keycloak-admin --from-literal=password="${KEYCLOAK_PASSWORD}" -n keycloak
-```
-
-### Create configmap for Traefik realm
-
-```bash
-envsubst < keycloak/realm-cm.yaml | kubectl apply -f -
-```
-
-### Set ingressRoute for keycloak
-
-```bash
-envsubst < keycloak/ingress.yaml | kubectl apply -f -
-```
-
-### Install Keycloak with realm configuration
-
-```bash
-helm upgrade --install keycloak bitnami/keycloak --create-namespace --namespace keycloak --set keycloakConfigCli.extraEnvVars\[0\].name="KEYCLOAK_URL" --set keycloakConfigCli.extraEnvVars\[0\].value="https://keycloak.${CLUSTERNAME}.${DOMAINNAME}" --values keycloak/keycloak-values.yaml --version 21.7.1
-```
-
+## Deploy api
 
 ```bash
 k apply -f api/namespace.yaml
 k apply -f api/customers/deployments
 envsubst < api/customers/ingresses/api-ingress-v1.yaml | kubectl apply -f -
-envsubst < api/customers/ingresses/api-ingress-v2.yaml | kubectl apply -f -
-envsubst < api/customers/ingresses/api-ingress-v3.yaml | kubectl apply -f -
 k apply -f api/customers/apis
 envsubst < api/portal/portal-ingress.yaml | kubectl apply -f -
 envsubst < api/portal/portal.yaml | kubectl apply -f -
