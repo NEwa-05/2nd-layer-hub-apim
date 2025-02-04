@@ -1,6 +1,6 @@
-# 2nd-layer-hub-apim
-Test possibility to run Hub APIM behind another ingress controller
+# Hub APIM behind another Ingress controller
 
+Test possibility to run Hub APIM behind another ingress controller
 
 ## Generate Wildcard Cert
 
@@ -45,10 +45,10 @@ curl -s -X POST -d $ADDRECORD \
   https://api.gandi.net/v5/livedns/domains/$DOMAINNAME/records
 ```
 
-### Deploy dashboard ingress
+### Deploy OSS dashboard ingress
 
 ```bash
-envsubst < oss/ingress.yaml | kubectl apply -f -
+envsubst < oss/dashboard-ingress.yaml | kubectl apply -f -
 ```
 
 ## deploy Redis
@@ -85,17 +85,18 @@ helm upgrade --install traefik traefik/traefik --create-namespace --namespace tr
 envsubst < oss/catch-all.yaml | kubectl apply -f -
 ```
 
-### Deploy dashboard ingress
+### Deploy Hub dashboard ingress
 
 ```bash
-envsubst < hub/ingress.yaml | kubectl apply -f -
+envsubst < hub/dashboard-ingress.yaml | kubectl apply -f -
 ```
 
 ## Deploy api
 
 ```bash
 k apply -f api/namespace.yaml
-k apply -f api/customers/deployments
+kubectl apply -f api/customers/deployments/spec.yaml
+k apply -f api/customers/deployments/customer-v1.yaml
 envsubst < api/customers/ingresses/api-ingress-v1.yaml | kubectl apply -f -
 k apply -f api/customers/apis
 envsubst < api/portal/portal-ingress.yaml | kubectl apply -f -

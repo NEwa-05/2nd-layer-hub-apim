@@ -13,7 +13,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`api.${CLUSTERNAME}.${FULLDOMAINNAME}`) && PathPrefix(`/customers`)
+      match: Host(`api.hub.${CLUSTERNAME}.${FULLDOMAINNAME}`) && PathPrefix(`/customers`)
       services:
         - name: customer-app
           port: 3000

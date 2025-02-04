@@ -11,7 +11,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-  - match: Host(`api-portal.${CLUSTERNAME}.${FULLDOMAINNAME}`)
+  - match: Host(`api-portal.hub.${CLUSTERNAME}.${FULLDOMAINNAME}`)
     kind: Rule
     services:
     - name: apiportal

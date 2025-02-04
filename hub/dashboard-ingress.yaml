@@ -11,7 +11,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`hub.${CLUSTERNAME}.${FULLDOMAINNAME}`)
+      match: Host(`hub.hub.${CLUSTERNAME}.${FULLDOMAINNAME}`)
       services:
         - name: api@internal
           kind: TraefikService

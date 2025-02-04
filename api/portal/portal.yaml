@@ -8,6 +8,6 @@ spec:
   title: API Portal
   description: "Developer Portal"
   trustedUrls:
-    - https://api-portal.${CLUSTERNAME}.${FULLDOMAINNAME}/
+    - https://api-portal.hub.${CLUSTERNAME}.${FULLDOMAINNAME}/
   ui:
     logoUrl: https://traefik.io/favicon.png
